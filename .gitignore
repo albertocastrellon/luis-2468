@@ -1,0 +1,6 @@
+# Carpetas internas de commandcode (no subir)
+.commandcode/
+.kilo/
+
+# Dependencias
+node_modules/
