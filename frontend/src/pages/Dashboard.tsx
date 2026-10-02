@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Card, Button } from "../components/ui";
+import { Card, Button, MoneyBillIcon } from "../components/ui";
 import { useAuth } from "../context/useAuth";
 
 const bets = [
@@ -42,12 +42,14 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <section className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+      <section
+        className="animate-fade-up flex flex-col justify-between gap-6 lg:flex-row lg:items-end"
+      >
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.24em] text-mint">
-            Panel de control
+          <p className="text-lg font-bold uppercase tracking-[0.24em] text-mint">
+            Bienvenido
           </p>
-          <h1 className="mt-3 text-4xl font-black tracking-tight">
+          {/* <h1 className="mt-3 text-4xl font-black tracking-tight">
             Hola,{" "}
             {user?.fullName
               .split(" ")
@@ -56,19 +58,23 @@ export function DashboardPage() {
                   word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
               )
               .join(" ")}
-          </h1>
+          </h1> */}
           <p className="mt-3 max-w-xl text-sm leading-6 text-slate-400 sm:text-base">
             Consulta tu saldo y sigue el rendimiento de tus caracoles favoritos.
           </p>
         </div>
         <Link to="/dashboard/recharge">
           <Button className="mt-0 w-full bg-mint px-6 py-3 text-base shadow-[0_12px_35px_rgba(184,243,151,.16)] hover:bg-lime-200 sm:w-auto">
-            + Recargar saldo
+            <MoneyBillIcon />
+            Recargar saldo
           </Button>
         </Link>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-[1.35fr_.65fr]">
+      <section
+        className="animate-fade-up grid gap-5 xl:grid-cols-[1.35fr_.65fr]"
+        style={{ animationDelay: "0.1s" }}
+      >
         {/* El saldo es la información financiera principal y queda visualmente priorizado. */}
         <Card className="rounded-xl relative min-h-[250px] overflow-hidden border-mint/20 bg-gradient-to-br from-[#153b3a] via-panel to-[#0c1825] p-7 sm:p-9">
           <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-mint/10 blur-3xl" />
@@ -181,7 +187,10 @@ export function DashboardPage() {
         </div>
       </section>
 
-      <section className="grid gap-5 lg:grid-cols-[.85fr_1.15fr]">
+      <section
+        className="animate-fade-up grid gap-5 lg:grid-cols-[.85fr_1.15fr]"
+        style={{ animationDelay: "0.2s" }}
+      >
         <Card className="rounded-xl border-white/10 bg-[#0d1b2a] p-6 sm:p-7">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -292,42 +301,6 @@ export function DashboardPage() {
         </Card>
       </section>
 
-      <section className="grid gap-5 sm:grid-cols-3">
-        <Card className="rounded-xl border-aqua/15 bg-gradient-to-br from-[#123245] to-[#101f2b] p-5 shadow-[0_16px_38px_rgba(125,211,252,.08)]">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-              Total de apuestas
-            </p>
-            <span className="text-aqua">↗</span>
-          </div>
-          <p className="mt-4 text-3xl font-black text-white">{totalBets}</p>
-          <p className="mt-1 text-xs text-aqua">Actividad del club</p>
-        </Card>
-        <Card className="rounded-xl border-violet-300/15 bg-gradient-to-br from-[#29234a] to-[#101f2b] p-5 shadow-[0_16px_38px_rgba(155,135,245,.08)]">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-              Mejor caracol
-            </p>
-            <span className="text-lg text-violet-200">★</span>
-          </div>
-          <p className="mt-4 text-3xl font-black text-white">
-            {snails[0].wins}
-          </p>
-          <p className="mt-1 truncate text-xs text-violet-200">
-            {snails[0].name} · líder actual
-          </p>
-        </Card>
-        <Card className="rounded-xl border-mint/15 bg-gradient-to-br from-[#163936] to-[#101f2b] p-5 shadow-[0_16px_38px_rgba(184,243,151,.08)]">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">
-              Estado de cuenta
-            </p>
-            <span className="h-2.5 w-2.5 rounded-full bg-mint shadow-[0_0_14px_rgba(184,243,151,.8)]" />
-          </div>
-          <p className="mt-4 text-3xl font-black text-mint">Activo</p>
-          <p className="mt-1 text-xs text-slate-400">Sesión protegida</p>
-        </Card>
-      </section>
     </div>
   );
 }

@@ -11,6 +11,7 @@ import {
   PasswordInput,
   Spinner,
 } from "../components/ui";
+import { HeroHeading } from "../components/HeroHeading";
 import { useAuth } from "../context/useAuth";
 import { getApiError } from "../utils/errors";
 
@@ -59,22 +60,15 @@ export function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col bg-ink text-white">
       <main className="mx-auto grid w-full max-w-6xl flex-1 content-center gap-14 px-6 py-8 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
-        <div className="text-center lg:text-left">
-          <h1 className="mx-auto max-w-3xl text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:mx-0 lg:text-7xl">
-            Tu próxima carrera
-          </h1>
-          <h1 className="text-mint mx-auto max-w-3xl text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:mx-0 lg:text-7xl">
-            comienza
-          </h1>
-          <h1 className="text-mint mx-auto max-w-3xl text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:mx-0 lg:text-7xl">
-            aquí.
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-center text-base leading-7 text-slate-400 sm:text-lg sm:leading-8 lg:mx-0 lg:text-left">
-            Explora estadísticas de caracoles, recarga tu saldo con SnailPay y
-            disfruta un dashboard diseñado para seguir cada victoria.
-          </p>
-        </div>
-        <Card className="w-full max-w-md justify-self-center rounded-xl px-10 lg:justify-self-end">
+        <HeroHeading
+          lines={[
+            { text: "Tu próxima carrera" },
+            { text: "comienza", highlight: true },
+            { text: "aquí.", highlight: true },
+          ]}
+          description="Explora estadísticas de caracoles, recarga tu saldo con SnailPay y diviértete."
+        />
+        <Card className="w-full max-w-md animate-fade-up-slow justify-self-center rounded-xl px-10 lg:justify-self-end">
           <h2 className="py-6 text-3xl font-black text-center">
             Iniciar sesión
           </h2>
@@ -98,7 +92,7 @@ export function LoginPage() {
               icon={<LockIcon />}
             />
             {/* Botón de envío con icono de acceso; muestra Spinner mientras carga */}
-            <Button disabled={loading}>
+            <Button disabled={loading} className="text-xl">
               {loading ? (
                 <Spinner />
               ) : (

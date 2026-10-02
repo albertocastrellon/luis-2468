@@ -1,6 +1,6 @@
 import type { User } from '../types';
 
-/** Claves de LocalStorage exigidas por las instrucciones de la prueba. */
+/** Claves de LocalStorage usadas por la aplicación. */
 export const STORAGE_KEYS = {
   user: 'sc_user',
   session: 'sc_session',
@@ -32,17 +32,17 @@ export async function hashPassword(password: string): Promise<string> {
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
-/** Obtiene todos los usuarios registrados localmente en esta demo. */
+/** Obtiene todos los usuarios registrados localmente. */
 export function getStoredUsers(): StoredUser[] {
   return read<StoredUser[]>(STORAGE_KEYS.users) ?? [];
 }
 
-/** Persiste la colección local de usuarios simulados. */
+/** Persiste la colección local de usuarios. */
 export function saveStoredUsers(users: StoredUser[]): void {
   localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
 }
 
-/** Guarda el perfil activo, la sesión simulada y su saldo inicial/actual. */
+/** Guarda el perfil activo, la sesión y su saldo inicial/actual. */
 export function persistSession(user: User): void {
   localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
   localStorage.setItem(STORAGE_KEYS.session, JSON.stringify({ userId: user.id, active: true }));

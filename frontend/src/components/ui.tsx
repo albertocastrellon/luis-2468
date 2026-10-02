@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useId, useState, type CSSProperties } from "react";
 import type {
   ButtonHTMLAttributes,
   InputHTMLAttributes,
@@ -12,7 +12,7 @@ export function Button({
 }: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
-      className={`mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-mint px-5 py-3 text-xl font-bold text-ink transition hover:bg-lime-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-mint px-5 py-3 font-bold text-ink transition hover:bg-lime-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       {...props}
     >
       {children}
@@ -209,6 +209,45 @@ export function UserIcon() {
   );
 }
 
+/** Icono de tarjeta de crédito, para el campo de número de tarjeta. */
+export function CreditCardIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-7 w-7"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <path d="M2 10h20" />
+      <path d="M6 15h4" />
+    </svg>
+  );
+}
+
+/** Icono del signo de pesos, para acciones de recarga de saldo. */
+export function MoneyBillIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 2v20" />
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    </svg>
+  );
+}
+
 /** Icono de "registrar usuario" (persona con +). SVG inline para no agregar dependencias. */
 export function UserPlusIcon() {
   return (
@@ -232,12 +271,15 @@ export function UserPlusIcon() {
 export function Card({
   children,
   className = "",
+  style,
 }: {
   children: ReactNode;
   className?: string;
+  style?: CSSProperties;
 }) {
   return (
     <section
+      style={style}
       className={`rounded-3xl border border-white/10 bg-panel/80 p-6 shadow-glow ${className}`}
     >
       {children}
