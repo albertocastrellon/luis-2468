@@ -9,9 +9,14 @@ import { HttpError } from "../middleware/errorHandler";
 import { toPublicUser } from "../utils/publicUser";
 import type { LoginInput, RegisterInput } from "../types/domain";
 
-const cookieOptions = {
+const cookieOptions: {
+  httpOnly: boolean;
+  sameSite: "none" | "lax";
+  secure: boolean;
+  maxAge: number;
+} = {
   httpOnly: true,
-  sameSite: "lax" as const,
+  sameSite: env.nodeEnv === "production" ? "none" : "lax",
   secure: env.nodeEnv === "production",
   maxAge: 1000 * 60 * 60 * 24,
 };
@@ -44,11 +49,7 @@ export const register: RequestHandler = async (req, res, next) => {
   } catch (error) {
     if (error instanceof DuplicateEmailError) {
       next(
-        new HttpError(
-          409,
-          "EMAIL_EXISTS",
-          "Este correo ya está registrado.",
-        ),
+        new HttpError(409, "EMAIL_EXISTS", "Este correo ya está registrado."),
       );
       return;
     }
@@ -85,10 +86,12 @@ export const me: RequestHandler = (req, res) => {
 export const logout: RequestHandler = (req, res) => {
   const sessionId = req.cookies?.[env.sessionCookieName] as string | undefined;
   if (sessionId) memoryRepository.deleteSession(sessionId);
+
   res.clearCookie(env.sessionCookieName, {
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: env.nodeEnv === "production" ? "none" : "lax",
     secure: env.nodeEnv === "production",
   });
+
   res.status(204).send();
 };
