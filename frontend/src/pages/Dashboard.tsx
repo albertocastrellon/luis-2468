@@ -13,20 +13,7 @@ import {
 } from "recharts";
 import { Card, Button, MoneyBillIcon } from "../components/ui";
 import { useAuth } from "../context/useAuth";
-
-const bets = [
-  { name: "Ganadas", value: 18 },
-  { name: "Perdidas", value: 7 },
-];
-
-const snails = [
-  { name: "Shellby", wins: 15 },
-  { name: "Caracolín", wins: 12 },
-  { name: "Turbo", wins: 10 },
-  { name: "Flash", wins: 9 },
-  { name: "Babosa", wins: 8 },
-  { name: "Slimy", wins: 6 },
-];
+import { SIMULATED_RACES, bets, snails } from "../utils/simulation";
 
 const tooltipStyle = {
   background: "#0b1725",
@@ -35,10 +22,23 @@ const tooltipStyle = {
   color: "#f8fafc",
 };
 
+/** El nombre registrado se muestra en estilo título (Ana López → Ana López). */
+function formatName(fullName?: string): string {
+  return (
+    fullName
+      ?.trim()
+      .split(" ")
+      .filter(Boolean)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ") ?? ""
+  );
+}
+
 export function DashboardPage() {
   const { user } = useAuth();
   const totalBets = bets.reduce((total, bet) => total + bet.value, 0);
   const successRate = Math.round((bets[0].value / totalBets) * 100);
+  const displayName = formatName(user?.fullName);
 
   return (
     <div className="space-y-8">
@@ -49,22 +49,18 @@ export function DashboardPage() {
           <p className="text-lg font-bold uppercase tracking-[0.24em] text-mint">
             Bienvenido
           </p>
-          {/* <h1 className="mt-3 text-4xl font-black tracking-tight">
-            Hola,{" "}
-            {user?.fullName
-              .split(" ")
-              .map(
-                (word) =>
-                  word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
-              )
-              .join(" ")}
-          </h1> */}
+          {/* Requisito del dashboard: mostrar el nombre completo registrado. */}
+          {displayName && (
+            <h1 className="mt-3 text-4xl font-black tracking-tight">
+              Hola, {displayName}
+            </h1>
+          )}
           <p className="mt-3 max-w-xl text-sm leading-6 text-slate-400 sm:text-base">
             Consulta tu saldo y sigue el rendimiento de tus caracoles favoritos.
           </p>
         </div>
         <Link to="/dashboard/recharge">
-          <Button className="mt-0 w-full bg-mint px-6 py-3 text-base shadow-[0_12px_35px_rgba(184,243,151,.16)] hover:bg-lime-200 sm:w-auto">
+          <Button className="!mt-0 w-full bg-mint px-6 py-3 text-base shadow-[0_12px_35px_rgba(184,243,151,.16)] hover:bg-lime-200 sm:w-auto">
             <MoneyBillIcon />
             Recargar saldo
           </Button>
@@ -254,7 +250,10 @@ export function DashboardPage() {
                 Victorias por caracol
               </h2>
             </div>
-            <span className="text-sm text-slate-500">Datos simulados</span>
+            {/* Deja explícita la jornada simulada: 6 carreras con 6 victorias. */}
+            <span className="text-sm text-slate-500">
+              {SIMULATED_RACES} carreras · Datos simulados
+            </span>
           </div>
           <div
             className="mt-5 h-64"
@@ -276,6 +275,10 @@ export function DashboardPage() {
                   stroke="#64748b"
                   axisLine={false}
                   tickLine={false}
+                  // Las victorias son enteras: sin esto Recharts marca 0.5, 1.5…
+                  allowDecimals={false}
+                  // El eje termina en el máximo real para que las barras lo usen.
+                  domain={[0, "dataMax"]}
                 />
                 <YAxis
                   type="category"

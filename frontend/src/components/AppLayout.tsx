@@ -37,7 +37,7 @@ export function AppLayout() {
       <div className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/95 shadow-lg shadow-black/20 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <div className="flex min-w-0 items-baseline gap-2.5">
-            <span className="shrink-0 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+            <span className="shrink-0 text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
               <span className="hidden sm:inline">Saldo disponible</span>
               <span className="sm:hidden">Saldo</span>
             </span>
@@ -46,7 +46,7 @@ export function AppLayout() {
             </span>
           </div>
           <Button
-            className="inline-flex shrink-0 items-center border border-mint/30 bg-mint px-3 py-2 text-sm font-bold text-ink shadow-[0_12px_35px_rgba(184,243,151,.16)] hover:bg-lime-200 sm:px-4 sm:py-2.5 sm:text-base"
+            className="!mt-0 inline-flex shrink-0 items-center border border-mint/30 bg-mint px-3 py-2 text-sm font-bold text-ink shadow-[0_12px_35px_rgba(184,243,151,.16)] hover:bg-lime-200 sm:px-4 sm:py-2.5 sm:text-base"
             onClick={handleLogout}
           >
             <LogoutIcon />

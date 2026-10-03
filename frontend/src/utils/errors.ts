@@ -8,7 +8,7 @@ export const EMAIL_EXISTS_MESSAGE = "Este correo ya está registrado.";
 export const INVALID_CREDENTIALS_MESSAGE = "Correo o contraseña incorrectos.";
 export const GENERIC_ERROR_MESSAGE = "Ocurrió un error. Inténtalo de nuevo.";
 export const NETWORK_ERROR_MESSAGE =
-  "No pudimos conectar con el servidor. Revisa tu conexión.";
+  "Revisa tu conexión o ponte en contacto con soporte.";
 export const VALIDATION_ERROR_MESSAGE = "Revisa los datos ingresados.";
 
 // ─────────────────────────────────────────────

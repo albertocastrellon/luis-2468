@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-La API queda disponible en `http://localhost:3000`. Copia `.env.example` a `.env` para cambiar el puerto u origen permitido. En desarrollo, los usuarios y saldos se conservan en `data/users.json`; puedes cambiar esa ruta con `CARACOL_DATA_FILE`.
+La API queda disponible en `http://localhost:3000`. Copia `.env.example` a `.env` para cambiar el puerto u origen permitido: `src/index.ts` carga el archivo con `dotenv` antes de leer la configuración (las variables ya definidas en la terminal tienen prioridad). En desarrollo, los usuarios y saldos se conservan en `data/users.json`; puedes cambiar esa ruta con `CARACOL_DATA_FILE`.
 
 ## Scripts
 

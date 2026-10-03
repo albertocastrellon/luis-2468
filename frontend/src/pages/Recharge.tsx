@@ -20,6 +20,19 @@ type FormState = PaymentForm;
 
 const MAX_AMOUNT = 100000;
 
+/**
+ * Orden visual de los campos. Determina a cuál saltar con el foco cuando la
+ * validación falla: siempre al primer campo inválido siguiendo este orden.
+ * Debe coincidir con el atributo `name` de cada input del formulario.
+ */
+const FIELD_ORDER: (keyof PaymentForm)[] = [
+  "fullName",
+  "cardNumber",
+  "expirationDate",
+  "cvv",
+  "amount",
+];
+
 /** Valida todos los campos antes de permitir el envío al backend. */
 function validateForm(form: FormState): FieldErrors {
   const errors: FieldErrors = {};
@@ -109,13 +122,24 @@ export function RechargePage() {
     fullName: user?.fullName.toUpperCase() ?? "",
     amount: 100,
   });
-  const [errors, setErrors] = useState<FieldErrors>({});
+  /**
+   * No hay estado de errores en la vista: la validación se ejecuta al enviar y
+   * su resultado se comunica solo con el toast + foco, sin mensaje bajo el input.
+   */
   const [message, setMessage] = useState<{
     type: "success" | "error" | "warning";
     text: string;
   } | null>(null);
   const [loading, setLoading] = useState(false);
+  /**
+   * Interruptor de demostración: obliga a SnailPay a responder con un error de
+   * sistema (HTTP 502) para poder ver ese escenario desde la interfaz. El
+   * backend solo lo acepta en desarrollo o test y nunca modifica el saldo.
+   */
+  const [simulateError, setSimulateError] = useState(false);
   const submissionInProgress = useRef(false);
+  /** Referencia al formulario para poder enfocar un campo por su `name`. */
+  const formRef = useRef<HTMLFormElement>(null);
 
   /** Navega directamente al dashboard sin confirmar el descarte del formulario. */
   const handleLeave = () => {
@@ -152,9 +176,31 @@ export function RechargePage() {
         ...current,
         [field]: field === "amount" ? Number(event.target.value) : value,
       }));
-      setErrors((current) => ({ ...current, [field]: undefined }));
       setMessage(null);
     };
+
+  /**
+   * Avisa del primer error con un toast y coloca el foco en el campo que lo originó.
+   */
+  const showValidationFeedback = (fieldErrors: FieldErrors) => {
+    const firstInvalid = FIELD_ORDER.find((field) => fieldErrors[field]);
+    if (!firstInvalid) return;
+
+    // El toast no se espera: se dispara primero y el foco se mueve enseguida.
+    void Swal.fire({
+      theme: "dark",
+      toast: true,
+      position: "top-end",
+      icon: "warning",
+      title: fieldErrors[firstInvalid],
+      showConfirmButton: false,
+      timer: 4000,
+      timerProgressBar: true,
+    });
+
+    const field = formRef.current?.elements.namedItem(firstInvalid);
+    if (field instanceof HTMLElement) field.focus();
+  };
 
   /**
    * Valida y procesa una única recarga, mostrando el resultado global con SweetAlert.
@@ -165,17 +211,22 @@ export function RechargePage() {
     if (submissionInProgress.current) return;
 
     const validationErrors = validateForm(form);
-    setErrors(validationErrors);
     setMessage(null);
-    if (Object.keys(validationErrors).length > 0) return;
+    if (Object.keys(validationErrors).length > 0) {
+      showValidationFeedback(validationErrors);
+      return;
+    }
 
     submissionInProgress.current = true;
     setLoading(true);
     try {
-      const response = await paymentService.pay({
-        ...form,
-        fullName: form.fullName.trim(),
-      });
+      const response = await paymentService.pay(
+        {
+          ...form,
+          fullName: form.fullName.trim(),
+        },
+        simulateError,
+      );
       //  Conservar únicamente los valores ficticios devueltos por SnailPay.
       persistCardData(response.payment.card_number, response.payment.cvv);
       if (response.payment.status === "approved") {
@@ -216,19 +267,19 @@ export function RechargePage() {
       const response =
         error && typeof error === "object" && "response" in error
           ? (
-            error as {
-              response?: {
-                status?: number;
-                data?: {
-                  payment?: {
-                    status_detail?: string;
-                    card_number?: string;
-                    cvv?: string;
+              error as {
+                response?: {
+                  status?: number;
+                  data?: {
+                    payment?: {
+                      status_detail?: string;
+                      card_number?: string;
+                      cvv?: string;
+                    };
                   };
                 };
-              };
-            }
-          ).response
+              }
+            ).response
           : undefined;
       if (response?.data?.payment?.card_number && response.data.payment.cvv) {
         // Solo persistir los valores ficticios incluidos en una respuesta SnailPay procesada.
@@ -265,10 +316,7 @@ export function RechargePage() {
         ← Volver al dashboard
       </button>
 
-      <div
-        className="animate-fade-up mt-6"
-        style={{ animationDelay: "0.05s" }}
-      >
+      <div className="animate-fade-up mt-6" style={{ animationDelay: "0.05s" }}>
         <p className="text-md font-bold uppercase tracking-[0.2em] text-mint">
           SnailPay
         </p>
@@ -281,10 +329,16 @@ export function RechargePage() {
         </p>
       </div>
 
+      {/*
+        Las dos columnas bajan con el mismo scroll. Antes la vista previa era
+        `lg:sticky lg:top-6` y, como la barra superior también es fija (~69px),
+        se detenía por debajo de ella y quedaba medio tapada mientras solo el
+        formulario seguía moviéndose.
+      */}
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.18fr_0.82fr] lg:items-start">
         {/* Panel visual que resume la tarjeta */}
         <aside
-          className="animate-fade-up space-y-5 lg:sticky lg:top-6"
+          className="animate-fade-up space-y-5"
           style={{ animationDelay: "0.15s" }}
         >
           <Card className="relative min-h-[330px] overflow-hidden rounded-xl border-aqua/20 bg-gradient-to-br from-[#183d50] via-[#123043] to-[#111d31] p-6 shadow-[0_24px_70px_rgba(49,174,198,.12)] sm:p-8">
@@ -364,12 +418,17 @@ export function RechargePage() {
             </div>
           </div>
 
-          <form className="grid gap-5" onSubmit={submit} noValidate>
+          <form
+            ref={formRef}
+            className="grid gap-5"
+            onSubmit={submit}
+            noValidate
+          >
             <Input
               label="Nombre del titular"
+              name="fullName"
               value={form.fullName}
               onChange={update("fullName")}
-              error={errors.fullName}
               required
               maxLength={80}
               autoComplete="cc-name"
@@ -377,9 +436,9 @@ export function RechargePage() {
             />
             <Input
               label="Número de tarjeta"
+              name="cardNumber"
               value={formatCardInput(form.cardNumber)}
               onChange={update("cardNumber")}
-              error={errors.cardNumber}
               required
               maxLength={19}
               inputMode="numeric"
@@ -391,9 +450,9 @@ export function RechargePage() {
             <div className="grid min-w-0 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
               <Input
                 label="Vencimiento"
+                name="expirationDate"
                 value={form.expirationDate}
                 onChange={update("expirationDate")}
-                error={errors.expirationDate}
                 required
                 maxLength={5}
                 pattern="(0[1-9]|1[0-2])/[0-9]{2}"
@@ -402,9 +461,9 @@ export function RechargePage() {
               />
               <Input
                 label="CVV"
+                name="cvv"
                 value={form.cvv}
                 onChange={update("cvv")}
-                error={errors.cvv}
                 required
                 maxLength={3}
                 inputMode="numeric"
@@ -413,13 +472,13 @@ export function RechargePage() {
               />
               <Input
                 label="Monto"
+                name="amount"
                 type="number"
                 min="0.01"
                 max={MAX_AMOUNT}
                 step="0.01"
                 value={form.amount}
                 onChange={update("amount")}
-                error={errors.amount}
                 required
               />
             </div>
@@ -432,6 +491,27 @@ export function RechargePage() {
               </p>
             )}
 
+            {/* Control de demostración: permite reproducir el error de sistema. */}
+            <label
+              htmlFor="simulate-system-error"
+              className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-orange-300/40"
+            >
+              <input
+                id="simulate-system-error"
+                type="checkbox"
+                checked={simulateError}
+                onChange={(event) => setSimulateError(event.target.checked)}
+                className="mt-1 h-4 w-4 shrink-0 accent-orange-400"
+              />
+              <span className="text-sm leading-6 text-slate-400">
+                <span className="block font-bold text-orange-200">
+                  Simular error del sistema
+                </span>
+                Fuerza a SnailPay a fallar (HTTP 502) para ver ese escenario: el
+                saldo no se modifica. Solo funciona en desarrollo.
+              </span>
+            </label>
+
             <Button
               disabled={loading}
               className="mt-2 w-full rounded-xl py-4 text-base shadow-[0_14px_30px_rgba(184,243,151,.15)]"
@@ -443,7 +523,6 @@ export function RechargePage() {
               )}
             </Button>
           </form>
-
         </Card>
       </div>
     </div>

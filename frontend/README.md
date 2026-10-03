@@ -20,9 +20,13 @@ npm run dev
 
 1. Registra un usuario en `/register`.
 2. Inicia sesión en `/login`.
-3. Consulta el dashboard en `/dashboard`.
+3. Consulta el dashboard en `/dashboard` (saludo con el nombre registrado, saldo, donut de apuestas y barras de victorias: 6 caracoles, 6 carreras simuladas).
 4. Recarga en `/dashboard/recharge`.
 5. Cierra sesión desde el header.
+
+## Simulación de SnailPay
+
+La página de recarga incluye la casilla **Simular error del sistema**, que agrega `?simulate_error=true` a la petición para obtener el HTTP 502 sin modificar el saldo. Solo tiene efecto cuando el backend corre en desarrollo o test.
 
 ## Persistencia
 
@@ -38,4 +42,4 @@ El frontend conserva en LocalStorage las claves `sc_user`, `sc_session`, `sc_bal
 - CVV: solo números, exactamente 3 dígitos.
 - Monto: mayor que cero, máximo `$100,000` y hasta 2 decimales.
 
-La validación se ejecuta mientras se escribe, antes del envío y nuevamente en backend.
+Los campos se sanean mientras se escribe (dígitos, longitud y formato) y la validación completa se ejecuta al enviar; el backend vuelve a validarla. Si el envío tiene errores, aparece un toast con el primer mensaje y el foco pasa al primer campo inválido. No hay mensaje debajo del input: el toast es la única indicación.

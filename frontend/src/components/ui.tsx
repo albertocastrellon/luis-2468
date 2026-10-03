@@ -22,12 +22,10 @@ export function Button({
 
 export function Input({
   label,
-  error,
   icon,
   ...props
 }: InputHTMLAttributes<HTMLInputElement> & {
   label: string;
-  error?: string;
   icon?: ReactNode;
 }) {
   return (
@@ -40,13 +38,9 @@ export function Input({
           </span>
         )}
         <input
-          className={`w-full min-w-0 rounded-lg border border-white/10 bg-white/5 py-3 pr-12 text-white outline-none transition placeholder:text-slate-500 focus:border-mint focus:ring-2 focus:ring-mint/20 ${icon ? "pl-12" : "pl-4"}`}
+          className={`w-full min-w-0 rounded-lg border border-white/10 bg-white/5 py-3 pr-4 text-white outline-none transition placeholder:text-slate-500 focus:border-mint focus:ring-2 focus:ring-mint/20 ${icon ? "pl-12" : "pl-4"}`}
           {...props}
         />
-      </span>
-      {/* Se reserva altura aunque no haya error para evitar saltos y empalmes al validar. */}
-      <span className="min-h-10 text-xs leading-5 text-rose-300">
-        {error ?? "\u00a0"}
       </span>
     </label>
   );
@@ -143,9 +137,24 @@ export function PasswordInput({
 /** Icono de correo para identificar el campo de email. */
 export function MailIcon() {
   return (
-    <svg aria-hidden="true" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 6.75A2.25 2.25 0 0 1 5.25 4.5h13.5A2.25 2.25 0 0 1 21 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 17.25V6.75Z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 6 6.16 4.62a2.25 2.25 0 0 0 2.68 0L19.5 6" />
+    <svg
+      aria-hidden="true"
+      className="h-7 w-7"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.8}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 6.75A2.25 2.25 0 0 1 5.25 4.5h13.5A2.25 2.25 0 0 1 21 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 17.25V6.75Z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m4.5 6 6.16 4.62a2.25 2.25 0 0 0 2.68 0L19.5 6"
+      />
     </svg>
   );
 }
@@ -153,9 +162,28 @@ export function MailIcon() {
 /** Icono de candado para identificar el campo de contraseña. */
 export function LockIcon() {
   return (
-    <svg aria-hidden="true" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-      <rect width="13.5" height="10.5" x="5.25" y="10.5" rx="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 10.5V7.875a3.75 3.75 0 0 1 7.5 0V10.5" />
+    <svg
+      aria-hidden="true"
+      className="h-7 w-7"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.8}
+    >
+      <rect
+        width="13.5"
+        height="10.5"
+        x="5.25"
+        y="10.5"
+        rx="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M8.25 10.5V7.875a3.75 3.75 0 0 1 7.5 0V10.5"
+      />
     </svg>
   );
 }
@@ -203,8 +231,19 @@ export function LoginIcon() {
 /** Icono de usuario para identificar el campo de nombre completo. */
 export function UserIcon() {
   return (
-    <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.502 20.118a7.5 7.5 0 0 1 14.996 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.498-1.632Z" />
+    <svg
+      aria-hidden="true"
+      className="h-5 w-5"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.8}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.502 20.118a7.5 7.5 0 0 1 14.996 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.498-1.632Z"
+      />
     </svg>
   );
 }
